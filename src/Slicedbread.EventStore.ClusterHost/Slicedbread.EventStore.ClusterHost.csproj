@@ -46,6 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\EventStoreServiceConfiguration.cs" />
+    <Compile Include="Configuration\ExternalNode.cs" />
+    <Compile Include="Configuration\ExternalNodeCollection.cs" />
+    <Compile Include="Configuration\InternalNode.cs" />
     <Compile Include="Configuration\Node.cs" />
     <Compile Include="Configuration\NodeCollection.cs" />
     <Compile Include="EventStoreService.cs" />

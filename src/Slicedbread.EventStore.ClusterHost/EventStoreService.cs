@@ -50,7 +50,7 @@
 
         public void DumpConfig()
         {
-            var nodeCount = this.configuration.Nodes.Count;
+            var nodeCount = this.configuration.InternalNodes.Count;
 
             this.logger.Log("Configuration Settings");
             this.logger.Log("++++++++++++++++++++++\n");
@@ -60,7 +60,7 @@
             this.logger.Log(string.Format("Restart Window (ms): {0}", this.restartWindow.TotalMilliseconds));
             this.logger.Log("Node Configurations:");
 
-            foreach (Node node in this.configuration.Nodes)
+            foreach (InternalNode node in this.configuration.InternalNodes)
             {
                 var arguments = this.BuildNodeArguments(node, this.configuration, nodeCount, this.address);
                 this.logger.Log(string.Format("\t{0} : {1}", node.Name, arguments));
@@ -71,11 +71,11 @@
         {
             this.logger.Log("Starting");
 
-            var nodeCount = this.configuration.Nodes.Count;
+            var nodeCount = this.configuration.InternalNodes.Count;
 
             this.logger.Log(string.Format("Starting {0} nodes", nodeCount));
 
-            foreach (Node node in this.configuration.Nodes)
+            foreach (InternalNode node in this.configuration.InternalNodes)
             {
                 var arguments = this.BuildNodeArguments(node, this.configuration, nodeCount, this.address);
 
@@ -192,7 +192,7 @@
         }
 
         private string BuildNodeArguments(
-            Node currentNode,
+            InternalNode currentNode,
             EventStoreServiceConfiguration configuration,
             int nodeCount,
             IPAddress ipAddress)
@@ -219,7 +219,7 @@
 
             builder.AppendFormat("--use-dns-discovery- ");
 
-            foreach (var otherNode in configuration.Nodes.Cast<Node>().Where(n => !ReferenceEquals(n, currentNode)))
+            foreach (var otherNode in configuration.InternalNodes.Cast<InternalNode>().Where(n => !ReferenceEquals(n, currentNode)))
             {
                 builder.AppendFormat("--gossip-seed {0}:{1} ", ipAddress, otherNode.IntHttpPort);
             }

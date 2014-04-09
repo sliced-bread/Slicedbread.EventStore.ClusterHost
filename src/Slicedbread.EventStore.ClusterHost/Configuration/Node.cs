@@ -4,19 +4,6 @@ namespace Slicedbread.EventStore.ClusterHost.Configuration
 
     public class Node : ConfigurationElement
     {
-        [ConfigurationProperty("dbPath", IsRequired = true)]
-        public string DbPath
-        {
-            get
-            {
-                return (string)this["dbPath"];
-            }
-            set
-            {
-                this["dbPath"] = value;
-            }
-        }
-
         [ConfigurationProperty("extHttpPort", IsRequired = true)]
         public int ExtHttpPort
         {
@@ -43,20 +30,6 @@ namespace Slicedbread.EventStore.ClusterHost.Configuration
             }
         }
 
-        [ConfigurationProperty("httpPrefix", IsRequired = false)]
-        public string HttpPrefix
-        {
-            get
-            {
-                return (string)this["httpPrefix"];
-            }
-
-            set
-            {
-                this["httpPrefix"] = value;
-            }
-        }
-
         [ConfigurationProperty("intHttpPort", IsRequired = true)]
         public int IntHttpPort
         {
@@ -80,19 +53,6 @@ namespace Slicedbread.EventStore.ClusterHost.Configuration
             set
             {
                 this["intTcpPort"] = value;
-            }
-        }
-
-        [ConfigurationProperty("logPath", IsRequired = true)]
-        public string LogPath
-        {
-            get
-            {
-                return (string)this["logPath"];
-            }
-            set
-            {
-                this["logPath"] = value;
             }
         }
 

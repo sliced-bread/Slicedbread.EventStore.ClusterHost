@@ -3,7 +3,7 @@
     using System;
     using System.Configuration;
 
-    public class NodeCollection : ConfigurationElementCollection
+    public class ExternalNodeCollection : ConfigurationElementCollection
     {
         public override ConfigurationElementCollectionType CollectionType
         {
@@ -21,22 +21,22 @@
             }
         }
 
-        public InternalNode this[int index]
+        public ExternalNode this[int index]
         {
             get
             {
-                return this.BaseGet(index) as InternalNode;
+                return this.BaseGet(index) as ExternalNode;
             }
         }
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new InternalNode();
+            return new ExternalNode();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((InternalNode)element).Name;
+            return ((ExternalNode)element).Name;
         }
 
         protected override bool IsElementName(string elementName)

@@ -18,17 +18,31 @@
             }
         }
 
-        [ConfigurationProperty("nodes", IsDefaultCollection = false, IsKey = false, IsRequired = true)]
-        public NodeCollection Nodes
+        [ConfigurationProperty("internalNodes", IsDefaultCollection = false, IsKey = false, IsRequired = true)]
+        public NodeCollection InternalNodes
         {
             get
             {
-                return (NodeCollection)this["nodes"];
+                return (NodeCollection)this["internalNodes"];
             }
 
             set
             {
-                this["nodes"] = value;
+                this["internalNodes"] = value;
+            }
+        }
+
+        [ConfigurationProperty("externalNodes", IsDefaultCollection = false, IsKey = false, IsRequired = true)]
+        public ExternalNodeCollection ExternalNodes
+        {
+            get
+            {
+                return (ExternalNodeCollection)this["externalNodes"];
+            }
+
+            set
+            {
+                this["externalNodes"] = value;
             }
         }
 
