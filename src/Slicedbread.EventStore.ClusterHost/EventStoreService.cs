@@ -50,7 +50,7 @@
 
         public void DumpConfig()
         {
-            var nodeCount = this.configuration.InternalNodes.Count;
+            var nodeCount = this.configuration.InternalNodes.Count + this.configuration.ExternalNodes.Count;
 
             this.logger.Log("Configuration Settings");
             this.logger.Log("++++++++++++++++++++++\n");
@@ -58,12 +58,20 @@
             this.logger.Log(string.Format("EventStore Path: {0}", this.eventStorePath));
             this.logger.Log(string.Format("Restart Delay (ms): {0}", this.restartDelay));
             this.logger.Log(string.Format("Restart Window (ms): {0}", this.restartWindow.TotalMilliseconds));
-            this.logger.Log("Node Configurations:");
-
+            this.logger.Log("Internal Node Configurations:");
             foreach (InternalNode node in this.configuration.InternalNodes)
             {
                 var arguments = this.BuildNodeArguments(node, this.configuration, nodeCount, this.address);
                 this.logger.Log(string.Format("\t{0} : {1}", node.Name, arguments));
+            }
+
+            this.logger.Log("External Node Configurations:");
+            foreach (ExternalNode node in this.configuration.ExternalNodes)
+            {
+                this.logger.Log(string.Format("\tName:{0} IPAddress:{1} GossipPort:{2}", 
+                                                node.Name, 
+                                                node.IpAddress,
+                                                node.GossipPort));
             }
         }
 
@@ -222,6 +230,11 @@
             foreach (var otherNode in configuration.InternalNodes.Cast<InternalNode>().Where(n => !ReferenceEquals(n, currentNode)))
             {
                 builder.AppendFormat("--gossip-seed {0}:{1} ", ipAddress, otherNode.IntHttpPort);
+            }
+
+            foreach (var externalNode in configuration.ExternalNodes.Cast<ExternalNode>())
+            {
+                builder.AppendFormat("--gossip-seed {0}:{1} ", externalNode.IpAddress, externalNode.GossipPort);
             }
 
             return builder.ToString();

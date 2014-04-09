@@ -5,7 +5,7 @@
     public class ExternalNode : Node
     {
         [ConfigurationProperty("ipAddress", IsRequired = true)]
-        public string DbPath
+        public string IpAddress
         {
             get
             {
@@ -14,6 +14,19 @@
             set
             {
                 this["ipAddress"] = value;
+            }
+        }
+
+        [ConfigurationProperty("gossipPort", IsRequired = true)]
+        public string GossipPort
+        {
+            get
+            {
+                return (string)this["gossipPort"];
+            }
+            set
+            {
+                this["gossipPort"] = value;
             }
         }
     }
