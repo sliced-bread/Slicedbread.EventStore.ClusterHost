@@ -17,6 +17,32 @@ namespace Slicedbread.EventStore.ClusterHost.Configuration
             }
         }
 
+        [ConfigurationProperty("internalIpAddress", IsRequired = false)]
+        public string InternalIpAddress
+        {
+            get
+            {
+                return (string)this["internalIpAddress"];
+            }
+            set
+            {
+                this["internalIpAddress"] = value;
+            }
+        }
+
+        [ConfigurationProperty("externalIpAddress", IsRequired = false)]
+        public string ExternalIpAddress
+        {
+            get
+            {
+                return (string)this["externalIpAddress"];
+            }
+            set
+            {
+                this["externalIpAddress"] = value;
+            }
+        }
+
         [ConfigurationProperty("httpPrefix", IsRequired = false)]
         public string HttpPrefix
         {

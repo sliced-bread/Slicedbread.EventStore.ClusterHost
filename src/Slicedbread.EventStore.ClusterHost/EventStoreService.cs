@@ -203,15 +203,19 @@
             InternalNode currentNode,
             EventStoreServiceConfiguration configuration,
             int nodeCount,
-            IPAddress ipAddress)
+            IPAddress detectedIpAddress)
         {
             // Based on https://github.com/eventstore/eventstore/wiki/Setting-Up-OSS-Cluster
             var builder = new StringBuilder();
 
+            var internalIpAddress = GetInternalIpAddress(currentNode, detectedIpAddress);
+
+            var externalIpAddress = GetExternalIpAddress(currentNode, detectedIpAddress);
+
             builder.AppendFormat("--db {0} ", currentNode.DbPath);
             builder.AppendFormat("--log {0} ", currentNode.LogPath);
-            builder.AppendFormat("--int-ip {0} ", ipAddress);
-            builder.AppendFormat("--ext-ip {0} ", ipAddress);
+            builder.AppendFormat("--int-ip {0} ", internalIpAddress);
+            builder.AppendFormat("--ext-ip {0} ", externalIpAddress);
 
             if (!string.IsNullOrWhiteSpace(currentNode.HttpPrefix))
             {
@@ -229,7 +233,7 @@
 
             foreach (var otherNode in configuration.InternalNodes.Cast<InternalNode>().Where(n => !ReferenceEquals(n, currentNode)))
             {
-                builder.AppendFormat("--gossip-seed {0}:{1} ", ipAddress, otherNode.IntHttpPort);
+                builder.AppendFormat("--gossip-seed {0}:{1} ", GetInternalIpAddress(otherNode, detectedIpAddress), otherNode.IntHttpPort);
             }
 
             foreach (var externalNode in configuration.ExternalNodes.Cast<ExternalNode>())
@@ -267,6 +271,20 @@
             var windowInMs = config.RestartWindowMs.HasValue ? config.RestartWindowMs.Value : 1000 * 30;
 
             return new TimeSpan(0, 0, 0, 0, windowInMs);
+        }
+
+        private static string GetExternalIpAddress(InternalNode currentNode, IPAddress detectedIpAddress)
+        {
+            return string.IsNullOrEmpty(currentNode.ExternalIpAddress)
+                       ? detectedIpAddress.ToString()
+                       : currentNode.ExternalIpAddress;
+        }
+
+        private static string GetInternalIpAddress(InternalNode currentNode, IPAddress detectedIpAddress)
+        {
+            return string.IsNullOrEmpty(currentNode.InternalIpAddress)
+                       ? detectedIpAddress.ToString()
+                       : currentNode.InternalIpAddress;
         }
     }
 }
