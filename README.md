@@ -1,12 +1,18 @@
-# EventStore Cluster Host for OSS Clustering
+## EventStore Cluster Host for OSS Clustering
 
-## Introduction
+### Introduction
 
 The cluster host provides a simple way to configure and spin up [EventStore](http://www.geteventstore.com) OSS clusters as detailed in the [documentation](https://github.com/eventstore/eventstore/wiki/Setting-Up-OSS-Cluster). 
 
 The host itself is a single Windows service that can contains any number of "internal" instances (running on that server), which will be restarted if they fail, and the configuration allows connection to "external" hosts for cross-machine clusters.
 
 The host currently only supports "gossip seed" based clusters, rather than DNS based clusters.
+
+### Installation
+
+To install just build, copy the output to a directory on the server, update the configuration file as appropriate, copy the EventStore binaries to the correct location and run "Slicedbread.EventStore.ClusterHost install".
+
+The host uses [TopShelf](http://topshelf-project.com/) for the Windows service configuration, for more information on commandline parameters please see their [documentation](http://docs.topshelf-project.com/en/latest/overview/commandline.html)
 
 ### Configuration
 Configuration is split into three parts, the global config, the internal node config and the external node config.
