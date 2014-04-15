@@ -20,6 +20,8 @@ The global configuration options are:
 
 **restartWindowMs** *(optional)* - how long the "no restart" window is. If a host is started and fails within this window then it won't be restarted. This is to prevent a configuration change or other issue making the host constantly spin up new processes that will fail immediately. Defaults to 30 seconds.
 
+**additionalFlags** *(optional)* - any additional flags to pass to **all** of the internal nodes.
+
 #### Internal Node Configuration
 Internal nodes are nodes that will be started up and managed by the host and are defined by a collection of "node" elements inside a "internalNodes" element. The configuration values for each node are:
 
@@ -42,6 +44,8 @@ Internal nodes are nodes that will be started up and managed by the host and are
 **internalIpAddress** *(optional)* - the internal ip address of the node. Defaults to automatically detecting the IP - automatic detection will set the internal and external IPs to the same value.
 
 **externalIpAddress** *(optional)* - the external ip address of the node. Defaults to automatically detecting the IP - automatic detection will set the internal and external IPs to the same value.
+
+**additionalFlags** *(optional)* - any additional flags to pass to just this internal node.
 
 For more information on internal/external ports and ips take a look at the EventStore [documentation](https://github.com/eventstore/eventstore/wiki/Setting-Up-OSS-Cluster)
 

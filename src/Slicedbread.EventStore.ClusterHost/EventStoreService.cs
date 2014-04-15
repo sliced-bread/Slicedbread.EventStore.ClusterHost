@@ -227,6 +227,8 @@
             builder.AppendFormat("--int-http-port {0} ", currentNode.IntHttpPort);
             builder.AppendFormat("--ext-http-port {0} ", currentNode.ExtHttpPort);
 
+            builder.AppendFormat(" {0} {1} ", configuration.AdditionalFlags, currentNode.AdditionalFlags);
+
             builder.AppendFormat("--nodes-count {0} ", nodeCount);
 
             builder.AppendFormat("--use-dns-discovery- ");

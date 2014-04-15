@@ -121,5 +121,19 @@ namespace Slicedbread.EventStore.ClusterHost.Configuration
                 this["intTcpPort"] = value;
             }
         }
+
+        [ConfigurationProperty("additionalFlags", IsRequired = false)]
+        public string AdditionalFlags
+        {
+            get
+            {
+                return (string)this["additionalFlags"];
+            }
+
+            set
+            {
+                this["additionalFlags"] = value;
+            }
+        }
     }
 }
