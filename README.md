@@ -15,7 +15,11 @@ To install just build, copy the output to a directory on the server, update the 
 The host uses [TopShelf](http://topshelf-project.com/) for the Windows service configuration, for more information on commandline parameters please see their [documentation](http://docs.topshelf-project.com/en/latest/overview/commandline.html)
 
 ### Configuration
-Configuration is split into three parts, the global config, the internal node config and the external node config. You can dump the configuration to the screen by running Slicedbread.EventStore.ClusterHost with the --test parameter".
+Configuration is split into four parts, logging, the global config, the internal node config and the external node config. You can dump the configuration to the screen by running Slicedbread.EventStore.ClusterHost with the --test parameter".
+
+#### Logging
+
+Logging uses [NLog](http://nlog-project.org/) and by default logs INFO messages and above to Slicedbread.EventStore.ClusterHost.log. The logging level (Debug, Info, Error etc.), and the targets (files, event log etc.) can be configured in Slicedbread.EventStore.ClusterHost.exe.config. For more information on logging configuration see the NLog [documentation](https://github.com/nlog/NLog/wiki).
 
 #### Global Configuration
 The global configuration options are:
