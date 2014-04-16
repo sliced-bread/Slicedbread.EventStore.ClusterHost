@@ -15,7 +15,7 @@ To install just build, copy the output to a directory on the server, update the 
 The host uses [TopShelf](http://topshelf-project.com/) for the Windows service configuration, for more information on commandline parameters please see their [documentation](http://docs.topshelf-project.com/en/latest/overview/commandline.html)
 
 ### Configuration
-Configuration is split into three parts, the global config, the internal node config and the external node config.
+Configuration is split into three parts, the global config, the internal node config and the external node config. You can dump the configuration to the screen by running Slicedbread.EventStore.ClusterHost with the --test parameter".
 
 #### Global Configuration
 The global configuration options are:
