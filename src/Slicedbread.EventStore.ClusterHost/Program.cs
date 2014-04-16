@@ -41,9 +41,9 @@
                                     s.WhenStopped(tc => tc.Stop());
                                 });
 
-                        hc.SetDescription("EventEngine EventStore Service");
-                        hc.SetDisplayName("EventEngine EventStore");
-                        hc.SetServiceName("EventEngineEventStore");
+                        hc.SetDescription("EventStore OSS Cluster Host Service");
+                        hc.SetDisplayName("EventEngine Host");
+                        hc.SetServiceName("EventStoreHost");
                     });
 
             Console.ReadLine();
