@@ -9,8 +9,9 @@
     using System.Text;
     using System.Threading;
 
+    using NLog;
+
     using Slicedbread.EventStore.ClusterHost.Configuration;
-    using Slicedbread.EventStore.ClusterHost.Logging;
 
     public class EventStoreService
     {
@@ -22,7 +23,7 @@
 
         private readonly string eventStorePath;
 
-        private readonly ILogger logger;
+        private readonly Logger logger;
 
         private readonly IDictionary<Process, Tuple<string, DateTime>> processes;
 
@@ -34,7 +35,7 @@
 
         private bool stopping;
 
-        public EventStoreService(IPAddress address, EventStoreServiceConfiguration configuration, ILogger logger)
+        public EventStoreService(IPAddress address, EventStoreServiceConfiguration configuration, Logger logger)
         {
             this.address = address;
             this.configuration = configuration;
@@ -52,36 +53,43 @@
         {
             var nodeCount = this.configuration.InternalNodes.Count + this.configuration.ExternalNodes.Count;
 
-            this.logger.Log("Configuration Settings");
-            this.logger.Log("++++++++++++++++++++++\n");
-            this.logger.Log(string.Format("Nodes Configured: {0}", nodeCount));
-            this.logger.Log(string.Format("EventStore Path: {0}", this.eventStorePath));
-            this.logger.Log(string.Format("Restart Delay (ms): {0}", this.restartDelay));
-            this.logger.Log(string.Format("Restart Window (ms): {0}", this.restartWindow.TotalMilliseconds));
-            this.logger.Log("Internal Node Configurations:");
+            this.logger.Debug("Configuration Settings");
+            this.logger.Debug("++++++++++++++++++++++\n");
+            this.logger.Debug("Nodes Configured: {0}", nodeCount);
+            this.logger.Debug("EventStore Path: {0}", this.eventStorePath);
+            this.logger.Debug("Restart Delay (ms): {0}", this.restartDelay);
+            this.logger.Debug("Restart Window (ms): {0}", this.restartWindow.TotalMilliseconds);
+            this.logger.Debug("Internal Node Configurations:");
             foreach (InternalNode node in this.configuration.InternalNodes)
             {
                 var arguments = this.BuildNodeArguments(node, this.configuration, nodeCount, this.address);
-                this.logger.Log(string.Format("\t{0} : {1}", node.Name, arguments));
+                this.logger.Debug("\t{0} : {1}", node.Name, arguments);
             }
 
-            this.logger.Log("External Node Configurations:");
+            this.logger.Debug("External Node Configurations:");
             foreach (ExternalNode node in this.configuration.ExternalNodes)
             {
-                this.logger.Log(string.Format("\tName:{0} IPAddress:{1} GossipPort:{2}", 
-                                                node.Name, 
-                                                node.IpAddress,
-                                                node.GossipPort));
+                this.logger.Debug("\tName:{0} IPAddress:{1} GossipPort:{2}", 
+                                    node.Name, 
+                                    node.IpAddress,
+                                    node.GossipPort);
             }
         }
 
         public void Start()
         {
-            this.logger.Log("Starting");
+            this.logger.Info("Starting");
 
             var nodeCount = this.configuration.InternalNodes.Count;
 
-            this.logger.Log(string.Format("Starting {0} nodes", nodeCount));
+            this.logger.Info("Starting {0} nodes", nodeCount);
+
+            if (!File.Exists(this.eventStorePath))
+            {
+                this.logger.Error("Unable to locate EventStore executable ({0} does not exist.)", this.eventStorePath);
+
+                throw new InvalidOperationException("EventStore executable not found.");
+            }
 
             foreach (InternalNode node in this.configuration.InternalNodes)
             {
@@ -95,7 +103,7 @@
                 {
                     this.Stop();
 
-                    this.logger.Log("Unable to launch processes");
+                    this.logger.Error("Unable to launch processes");
 
                     throw new InvalidOperationException("Unable to start all processes");
                 }
@@ -110,7 +118,7 @@
 
         public void Stop()
         {
-            this.logger.Log("Stopping");
+            this.logger.Info("Stopping");
 
             this.stopping = true;
 
@@ -126,23 +134,23 @@
                 {
                     try
                     {
-                        this.logger.Log(string.Format("Killing: {0}", nodeName));
+                        this.logger.Info("Killing: {0}", nodeName);
 
                         process.Kill();
                         process.WaitForExit();
                         process.Dispose();
 
-                        this.logger.Log("Process killed");
+                        this.logger.Info("Process killed");
                     }
                         // ReSharper disable once EmptyGeneralCatchClause
                     catch
                     {
-                        this.logger.Log("Kill failed!");
+                        this.logger.Error("Kill failed! {0}", nodeName);
                     }
                 }
                 else
                 {
-                    this.logger.Log(string.Format("Process already exited: {0}", nodeName));
+                    this.logger.Info("Process already exited: {0}", nodeName);
                 }
             }
         }
@@ -151,7 +159,7 @@
         {
             if (this.stopping)
             {
-                this.logger.Log("Service stopping so auto-restart disabled");
+                this.logger.Info("Service stopping so auto-restart disabled");
                 return;
             }
 
@@ -169,31 +177,30 @@
                 var nodeName = processEntry.Item1;
                 var startedTime = processEntry.Item2;
 
-                this.logger.Log(string.Format("Process '{0}' has terminated.", nodeName));
+                this.logger.Info("Process '{0}' has terminated.", nodeName);
 
                 var currentTime = DateTime.Now;
                 var windowEnd = startedTime.Add(this.restartWindow);
 
                 if (windowEnd > currentTime)
                 {
-                    this.logger.Log(
-                        string.Format(
+                    this.logger.Info(
                             "Still inside restart window, not restarting. (Started at: {0} Now: {1} Window End: {2}",
                             startedTime,
                             currentTime,
-                            windowEnd));
+                            windowEnd);
                     return;
                 }
 
-                this.logger.Log(string.Format("Process needs to be restarted - sleeping for {0}s", this.restartDelay / 1000));
+                this.logger.Info("Process needs to be restarted - sleeping for {0}s", this.restartDelay / 1000);
 
                 Thread.Sleep(this.restartDelay);
 
-                this.logger.Log("Starting process");
+                this.logger.Info("Starting process");
 
                 var startResult = process.Start();
 
-                this.logger.Log(startResult ? "Started sucessfully, updating last start time" : "Start failed!");
+                this.logger.Info(startResult ? "Started sucessfully, updating last start time" : "Start failed!");
 
                 this.processes[process] = new Tuple<string, DateTime>(nodeName, DateTime.Now);
             }

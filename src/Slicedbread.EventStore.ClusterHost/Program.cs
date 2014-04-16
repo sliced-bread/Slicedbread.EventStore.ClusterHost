@@ -2,10 +2,12 @@
 {
     using System;
     using System.Configuration;
-    using System.IO;
+
+    using NLog;
+    using NLog.Config;
+    using NLog.Targets;
 
     using Slicedbread.EventStore.ClusterHost.Configuration;
-    using Slicedbread.EventStore.ClusterHost.Logging;
 
     using Topshelf;
 
@@ -18,9 +20,18 @@
 
             if (args.Length == 1 && args[0] == "--test")
             {
-                var service = new EventStoreService(address, configuration, new ConsoleLogger());
+                var config = new LoggingConfiguration();
+                var consoleTarget = new ColoredConsoleTarget { Layout = "${message}" };
+                config.AddTarget("console", consoleTarget);
+                var rule = new LoggingRule("*", LogLevel.Debug, consoleTarget);
+                config.LoggingRules.Add(rule);
 
-                service.DumpConfig();
+                LogManager.Configuration = config;
+
+                var logger = LogManager.GetLogger("config");
+
+                // ReSharper disable once ObjectCreationAsStatement
+                new EventStoreService(address, configuration, logger);
 
                 return;
             }
@@ -36,7 +47,7 @@
                         hc.Service<EventStoreService>(
                             s =>
                                 {
-                                    s.ConstructUsing(name => new EventStoreService(address, configuration, new FileLogger(GetLogFilename())));
+                                    s.ConstructUsing(name => new EventStoreService(address, configuration, LogManager.GetLogger("eventstorehost")));
                                     s.WhenStarted(tc => tc.Start());
                                     s.WhenStopped(tc => tc.Stop());
                                 });
@@ -47,11 +58,6 @@
                     });
 
             Console.ReadLine();
-        }
-
-        private static string GetLogFilename()
-        {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "host.log");
         }
     }
 }
