@@ -24,7 +24,7 @@ Logging uses [NLog](http://nlog-project.org/) and by default logs INFO messages 
 #### Global Configuration
 The global configuration options are:
 
-**eventStorePath** *(optional)* - provides the path to the EventStore.ClusterNode.exe. If this is not specified then the host will look for it in an "event store" subdirectory. If it is specified it can be either an absolute or relative path, and shoudl include the executable name.
+**eventStorePath** *(optional)* - provides the path to the EventStore.ClusterNode.exe. If this is not specified then the host will look for it in an "eventstore" subdirectory. If it is specified it can be either an absolute or relative path, and shoudl include the executable name.
 
 **restartDelayMs** *(optional)* - how long to wait (in milliseconds) before restarting a failed host process. Defaults to 3 seconds.
 
