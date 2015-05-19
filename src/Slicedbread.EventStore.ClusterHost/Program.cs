@@ -1,4 +1,6 @@
-﻿namespace Slicedbread.EventStore.ClusterHost
+﻿using System.Linq;
+
+namespace Slicedbread.EventStore.ClusterHost
 {
     using System;
     using System.Configuration;
@@ -17,6 +19,17 @@
         {
             var configuration = (EventStoreServiceConfiguration)ConfigurationManager.GetSection("eventStore");
             var address = NetworkHelpers.GetIPAddress();
+
+            if (args.Contains("--console", StringComparer.CurrentCultureIgnoreCase))
+            {
+                var config = new LoggingConfiguration();
+                var consoleTarget = new ColoredConsoleTarget { Layout = "${message}" };
+                config.AddTarget("console", consoleTarget);
+                var rule = new LoggingRule("*", LogLevel.Debug, consoleTarget);
+                config.LoggingRules.Add(rule);
+
+                LogManager.Configuration = config;
+            }
 
             if (args.Length == 1 && args[0] == "--test")
             {
@@ -53,7 +66,7 @@
                                 });
 
                         hc.SetDescription("EventStore OSS Cluster Host Service");
-                        hc.SetDisplayName("EventEngine Host");
+                        hc.SetDisplayName("EventStore Host");
                         hc.SetServiceName("EventStoreHost");
                     });
 

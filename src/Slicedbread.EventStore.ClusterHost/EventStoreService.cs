@@ -80,9 +80,9 @@
         {
             this.logger.Info("Starting");
 
-            var nodeCount = this.configuration.InternalNodes.Count;
+            var nodeCount = this.configuration.InternalNodes.Count + this.configuration.ExternalNodes.Count;
 
-            this.logger.Info("Starting {0} nodes", nodeCount);
+            this.logger.Info("Starting {0} nodes, {1} external nodes, {2} total.", this.configuration.InternalNodes.Count, this.configuration.ExternalNodes.Count, nodeCount);
 
             if (!File.Exists(this.eventStorePath))
             {
@@ -91,11 +91,17 @@
                 throw new InvalidOperationException("EventStore executable not found.");
             }
 
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(this.eventStorePath));
+
+            var executableName = Path.GetFileName(this.eventStorePath);
+
             foreach (InternalNode node in this.configuration.InternalNodes)
             {
                 var arguments = this.BuildNodeArguments(node, this.configuration, nodeCount, this.address);
 
-                var processStartInfo = new ProcessStartInfo(this.eventStorePath, arguments) { UseShellExecute = false };
+                this.logger.Info("Executing: {0} {1}", executableName, arguments);
+
+                var processStartInfo = new ProcessStartInfo(executableName, arguments) { UseShellExecute = false };
 
                 var process = Process.Start(processStartInfo);
 
@@ -219,35 +225,35 @@
 
             var externalIpAddress = GetExternalIpAddress(currentNode, detectedIpAddress);
 
-            builder.AppendFormat("--db {0} ", currentNode.DbPath);
-            builder.AppendFormat("--log {0} ", currentNode.LogPath);
-            builder.AppendFormat("--int-ip {0} ", internalIpAddress);
-            builder.AppendFormat("--ext-ip {0} ", externalIpAddress);
+            builder.AppendFormat("--db={0} ", currentNode.DbPath);
+            builder.AppendFormat("--log={0} ", currentNode.LogPath);
+            builder.AppendFormat("--int-ip={0} ", internalIpAddress);
+            builder.AppendFormat("--ext-ip={0} ", externalIpAddress);
 
             if (!string.IsNullOrWhiteSpace(currentNode.HttpPrefix))
             {
                 builder.AppendFormat("--http-prefix={0} ", currentNode.HttpPrefix);
             }
 
-            builder.AppendFormat("--int-tcp-port {0} ", currentNode.IntTcpPort);
-            builder.AppendFormat("--ext-tcp-port {0} ", currentNode.ExtTcpPort);
-            builder.AppendFormat("--int-http-port {0} ", currentNode.IntHttpPort);
-            builder.AppendFormat("--ext-http-port {0} ", currentNode.ExtHttpPort);
+            builder.AppendFormat("--int-tcp-port={0} ", currentNode.IntTcpPort);
+            builder.AppendFormat("--ext-tcp-port={0} ", currentNode.ExtTcpPort);
+            builder.AppendFormat("--int-http-port={0} ", currentNode.IntHttpPort);
+            builder.AppendFormat("--ext-http-port={0} ", currentNode.ExtHttpPort);
 
             builder.AppendFormat(" {0} {1} ", configuration.AdditionalFlags, currentNode.AdditionalFlags);
 
-            builder.AppendFormat("--nodes-count {0} ", nodeCount);
+            builder.AppendFormat("--cluster-size={0} ", nodeCount);
 
             builder.AppendFormat("--use-dns-discovery- ");
 
             foreach (var otherNode in configuration.InternalNodes.Cast<InternalNode>().Where(n => !ReferenceEquals(n, currentNode)))
             {
-                builder.AppendFormat("--gossip-seed {0}:{1} ", GetInternalIpAddress(otherNode, detectedIpAddress), otherNode.IntHttpPort);
+                builder.AppendFormat("--gossip-seed={0}:{1} ", GetInternalIpAddress(otherNode, detectedIpAddress), otherNode.IntHttpPort);
             }
 
             foreach (var externalNode in configuration.ExternalNodes.Cast<ExternalNode>())
             {
-                builder.AppendFormat("--gossip-seed {0}:{1} ", externalNode.IpAddress, externalNode.GossipPort);
+                builder.AppendFormat("--gossip-seed={0}:{1} ", externalNode.IpAddress, externalNode.GossipPort);
             }
 
             return builder.ToString();
