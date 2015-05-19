@@ -91,17 +91,13 @@
                 throw new InvalidOperationException("EventStore executable not found.");
             }
 
-            Directory.SetCurrentDirectory(Path.GetDirectoryName(this.eventStorePath));
-
-            var executableName = Path.GetFileName(this.eventStorePath);
-
             foreach (InternalNode node in this.configuration.InternalNodes)
             {
                 var arguments = this.BuildNodeArguments(node, this.configuration, nodeCount, this.address);
 
-                this.logger.Info("Executing: {0} {1}", executableName, arguments);
+                this.logger.Info("Executing: {0} {1}", this.eventStorePath, arguments);
 
-                var processStartInfo = new ProcessStartInfo(executableName, arguments) { UseShellExecute = false };
+                var processStartInfo = new ProcessStartInfo(this.eventStorePath, arguments) { UseShellExecute = false };
 
                 var process = Process.Start(processStartInfo);
 
