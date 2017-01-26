@@ -226,9 +226,20 @@
             builder.AppendFormat("--int-ip={0} ", internalIpAddress);
             builder.AppendFormat("--ext-ip={0} ", externalIpAddress);
 
+            if (!string.IsNullOrWhiteSpace(currentNode.InternalHttpPrefixes))
+            {
+                builder.AppendFormat("--int-http-prefixes=\"{0}\" ", currentNode.InternalHttpPrefixes);
+                builder.AppendFormat("---add-interface-prefixes=false ");
+            }
+            if (!string.IsNullOrWhiteSpace(currentNode.ExternalHttpPrefixes))
+            {
+                builder.AppendFormat("--ext-http-prefixes=\"{0}\" ", currentNode.ExternalHttpPrefixes);
+                builder.AppendFormat("---add-interface-prefixes=false ");
+            }
+             
             if (!string.IsNullOrWhiteSpace(currentNode.HttpPrefix))
             {
-                builder.AppendFormat("--http-prefix={0} ", currentNode.HttpPrefix);
+                Console.WriteLine("WARNING: HTTPPrefix is no longer used, use -int-http-prefixes and -ext-http-prefixes if non-standard behaviour is required.");
             }
 
             builder.AppendFormat("--int-tcp-port={0} ", currentNode.IntTcpPort);
@@ -240,7 +251,7 @@
 
             builder.AppendFormat("--cluster-size={0} ", nodeCount);
 
-            builder.AppendFormat("--use-dns-discovery- ");
+            builder.AppendFormat("--discover-via-dns=false ");
 
             foreach (var otherNode in configuration.InternalNodes.Cast<InternalNode>().Where(n => !ReferenceEquals(n, currentNode)))
             {

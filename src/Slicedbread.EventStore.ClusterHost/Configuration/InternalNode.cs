@@ -56,6 +56,34 @@ namespace Slicedbread.EventStore.ClusterHost.Configuration
                 this["httpPrefix"] = value;
             }
         }
+        
+        [ConfigurationProperty("internalHttpPrefixes", IsRequired = false)]
+        public string InternalHttpPrefixes
+        {
+            get
+            {
+                return (string)this["internalHttpPrefixes"];
+            }
+
+            set
+            {
+                this["internalHttpPrefixes"] = value;
+            }
+        }
+
+        [ConfigurationProperty("ExternalHttpPrefixes", IsRequired = false)]
+        public string ExternalHttpPrefixes
+        {
+            get
+            {
+                return (string)this["ExternalHttpPrefixes"];
+            }
+
+            set
+            {
+                this["ExternalHttpPrefixes"] = value;
+            }
+        }
 
         [ConfigurationProperty("logPath", IsRequired = true)]
         public string LogPath
