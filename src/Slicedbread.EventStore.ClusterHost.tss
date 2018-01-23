@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ArrayOfArrayOfString>
+    <ArrayOfString>
+      <string>c:\projects\work\slicedbread.eventstore.clusterhost\src\slicedbread.eventstore.clusterhost\program.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Projects\Work\Slicedbread.EventStore.ClusterHost\src\Slicedbread.EventStore.ClusterHost\EventStoreService.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>c:\projects\work\slicedbread.eventstore.clusterhost\src\slicedbread.eventstore.clusterhost\networkhelpers.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>c:\projects\work\slicedbread.eventstore.clusterhost\src\slicedbread.eventstore.clusterhost\configuration\internalnode.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>c:\projects\work\slicedbread.eventstore.clusterhost\src\slicedbread.eventstore.clusterhost\app.config</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>c:\projects\work\slicedbread.eventstore.clusterhost\src\slicedbread.eventstore.clusterhost\configuration\node.cs</string>
+    </ArrayOfString>
+  </ArrayOfArrayOfString>
+</ArrayOfArrayOfArrayOfString>

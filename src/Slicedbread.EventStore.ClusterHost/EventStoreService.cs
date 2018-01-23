@@ -253,14 +253,21 @@
 
             builder.AppendFormat("--discover-via-dns=false ");
 
+            var gossipSeeds = new List<string>();
+
             foreach (var otherNode in configuration.InternalNodes.Cast<InternalNode>().Where(n => !ReferenceEquals(n, currentNode)))
             {
-                builder.AppendFormat("--gossip-seed={0}:{1} ", GetInternalIpAddress(otherNode, detectedIpAddress), otherNode.IntHttpPort);
+                gossipSeeds.Add(string.Format("{0}:{1}", GetInternalIpAddress(otherNode, detectedIpAddress), otherNode.IntHttpPort));
             }
 
             foreach (var externalNode in configuration.ExternalNodes.Cast<ExternalNode>())
             {
-                builder.AppendFormat("--gossip-seed={0}:{1} ", externalNode.IpAddress, externalNode.GossipPort);
+                gossipSeeds.Add(string.Format("--gossip-seed={0}:{1} ", externalNode.IpAddress, externalNode.GossipPort));
+            }
+
+            if (gossipSeeds.Any())
+            {
+                builder.AppendFormat("--gossip-seed={0} ", String.Join(",", gossipSeeds));
             }
 
             return builder.ToString();
