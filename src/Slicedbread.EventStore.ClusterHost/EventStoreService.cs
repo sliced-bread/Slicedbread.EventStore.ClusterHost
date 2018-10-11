@@ -262,7 +262,7 @@
 
             foreach (var externalNode in configuration.ExternalNodes.Cast<ExternalNode>())
             {
-                gossipSeeds.Add(string.Format("--gossip-seed={0}:{1} ", externalNode.IpAddress, externalNode.GossipPort));
+                gossipSeeds.Add(string.Format("{0}:{1}", externalNode.IpAddress, externalNode.GossipPort));
             }
 
             if (gossipSeeds.Any())
